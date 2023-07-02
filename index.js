@@ -2,19 +2,19 @@ const express = require('express'),
   app = express(),
   cors = require('cors'),
   bodyParser = require('body-parser'),
-  Users = require('./users'),
-  User = require('./user')
+  Users = require('./users')
 require('dotenv').config()
 
 // config
 const BASE = '/api',
-  users = new Users();
+  users = new Users()
 
 // middleware
 app.use(cors())
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false })) // application/x-www-form-urlencoded
 app.use(bodyParser.json()) // application/json
+// app.use(currentRouteMiddleware)
 
 /**
  * ROUTES
@@ -76,7 +76,6 @@ app.get(`${BASE}/users/:_id/logs`, (req, res) => {
         count,
         log: logs
       }
-    console.log({ logs })
     res.json(userDetail)
   } catch (error) {
     if (error instanceof Error)
@@ -121,10 +120,12 @@ app.post(`${BASE}/users/:_id/exercises`, (req, res) => {
     user = users.getUserById(id);
   date = date ?? new Date();
   // add new log
-  const log = user.addLog(description, duration, date);
-  res.json(log);
+  const log = user.addLog(description, duration, date),
+    returner = { ...user.getDetails(), ...log }
+  res.json(returner);
 });
 
+// listen for requests
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })

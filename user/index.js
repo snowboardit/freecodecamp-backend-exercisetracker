@@ -33,7 +33,7 @@ class User {
         date: normalDate
       }
     this.#logs.push(newLog)
-    return newLog
+    return this.toHumanLog(newLog);
   }
 
   getLogs(from, to, limit) {
@@ -43,18 +43,26 @@ class User {
     return returner;
   }
 
+  toHumanLog(log) {
+    const date = new Date(log.date),
+      normalDate = date.toDateString(),
+      normalDuration = Number(log.duration),
+      returner = {
+        ...log,
+        date: normalDate,
+        duration: normalDuration
+      }
+    return returner
+  }
+
   toHumanLogs(logs) {
     return logs.map((log) => {
-      return {
-        ...log,
-        date: log.date.toString()
-      }
+      return this.toHumanLog(log)
     });
   }
 
   filterLogs(logs, from, to, limit) {
     let filteredLogs = [...logs];
-    console.log({ logs });
 
     if (from) {
       const fromDate = new Date(from);
