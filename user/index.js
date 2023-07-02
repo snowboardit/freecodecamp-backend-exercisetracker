@@ -14,7 +14,7 @@ class User {
     throw new Error('No username provided')
   }
 
-  get() {
+  getDetails() {
     return {
       _id: this.#_id,
       username: this.#username
@@ -26,12 +26,51 @@ class User {
   }
 
   addLog(description, duration, date) {
-    const newDate = !!date ? new Date(date) : new Date()
-    this.#logs.push({
-      description,
-      duration,
-      date: newDate
-    })
+    const normalDate = !!date ? new Date(date) : new Date(),
+      newLog = {
+        description,
+        duration,
+        date: normalDate
+      }
+    this.#logs.push(newLog)
+    return newLog
+  }
+
+  getLogs(from, to, limit) {
+    let returner = this.#logs;
+    returner = this.filterLogs(returner, from, to, limit);
+    returner = this.toHumanLogs(returner);
+    return returner;
+  }
+
+  toHumanLogs(logs) {
+    return logs.map((log) => {
+      return {
+        ...log,
+        date: log.date.toString()
+      }
+    });
+  }
+
+  filterLogs(logs, from, to, limit) {
+    let filteredLogs = [...logs];
+    console.log({ logs });
+
+    if (from) {
+      const fromDate = new Date(from);
+      filteredLogs = filteredLogs.filter((log) => new Date(log.date) >= fromDate);
+    }
+
+    if (to) {
+      const toDate = new Date(to);
+      filteredLogs = filteredLogs.filter((log) => new Date(log.date) <= toDate);
+    }
+
+    if (limit) {
+      filteredLogs = filteredLogs.slice(0, limit);
+    }
+
+    return filteredLogs;
   }
 
   getLogSize() {

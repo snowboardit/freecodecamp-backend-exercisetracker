@@ -45,11 +45,12 @@ app.get(`${BASE}/users`, (req, res) => {
     limit? = 10 // 
   } = req.query.params
 
-  Exercise = {
+  Exercise {
     description: string,
     duration: number, // minutes
     date: string, // date string
-  
+  }
+
   returns {
     username: string,
     count: number,
@@ -57,6 +58,31 @@ app.get(`${BASE}/users`, (req, res) => {
     log: Exercise[]
   }
 */
+app.get(`${BASE}/users/:_id/logs`, (req, res) => {
+  const id = req.params._id,
+    {
+      from, // yyyy-mm-dd format
+      to, // yyyy-md-dd format
+      limit = 10
+    } = req.query
+
+  try {
+    const user = users.getUserById(id),
+      details = user.getDetails(),
+      count = user.getLogSize(),
+      logs = user.getLogs(from, to, limit),
+      userDetail = {
+        ...details,
+        count,
+        log: logs
+      }
+    console.log({ logs })
+    res.json(userDetail)
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error(`failed to get user logs with id: ${id}`)
+  }
+})
 
 /** 
   POST - /api/users - add a new user
@@ -88,7 +114,16 @@ app.post(`${BASE}/users`, (req, res) => {
   }
   returns User[]
 */
-
+app.post(`${BASE}/users/:_id/exercises`, (req, res) => {
+  let { date } = req.body;
+  const { description, duration } = req.body,
+    id = req.params._id,
+    user = users.getUserById(id);
+  date = date ?? new Date();
+  // add new log
+  const log = user.addLog(description, duration, date);
+  res.json(log);
+});
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)

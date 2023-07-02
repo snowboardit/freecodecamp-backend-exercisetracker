@@ -7,7 +7,7 @@ class Users {
     const user = new User(username),
       id = user.getId()
     this.#users.set(id, user)
-    return user.get()
+    return user.getDetails()
   }
 
   exists(id) {
@@ -18,7 +18,7 @@ class Users {
   all() {
     const returner = []
     for (let user of this.#users.values()) {
-      const u = user.get()
+      const u = user.getDetails()
       returner.push(u)
     }
     return returner

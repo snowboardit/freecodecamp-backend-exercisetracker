@@ -5,7 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
-		"dev": "nodemon index.js"
+		"dev": "nodemon index.js",
+		"test": "node tmp/test.js"
 	},
 	"dependencies": {
 		"body-parser": "^1.20.2",
@@ -23,6 +24,7 @@
 		"express"
 	],
 	"devDependencies": {
+		"axios": "^1.4.0",
 		"nodemon": "^2.0.22"
 	}
 }
